@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { getMedicineStore, addMedicineToUser, logAdherence } from '../services/api';
-import { FaPlus, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaPlus, FaCheckCircle, FaTimesCircle, FaSignOutAlt } from 'react-icons/fa';
 
 const UserDashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [medicines, setMedicines] = useState([]);
   const [userMedicines, setUserMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,8 +66,18 @@ const UserDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8">
-        <h1 className="text-4xl font-bold">👋 Welcome, {user?.name}!</h1>
-        <p className="text-lg mt-2">Manage your medicines and track your adherence</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold">👋 Welcome, {user?.name}!</h1>
+            <p className="text-lg mt-2">Manage your medicines and track your adherence</p>
+          </div>
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="bg-white text-blue-500 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition flex items-center gap-2"
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -98,6 +110,9 @@ const UserDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {medicines.map((medicine) => (
               <div key={medicine._id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                {medicine.image && (
+                  <img src={medicine.image} alt={medicine.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                )}
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{medicine.name}</h3>
                 <p className="text-gray-600 mb-2">
                   <span className="font-bold">Dosage:</span> {medicine.dosage}

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { getReceivedMessages, getSentMessages, sendMessage, getAllUsers } from '../services/api';
-import { FaEnvelope, FaReply } from 'react-icons/fa';
+import { FaEnvelope, FaReply, FaSignOutAlt } from 'react-icons/fa';
 
 const DoctorDashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,8 +61,18 @@ const DoctorDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white p-8">
-        <h1 className="text-4xl font-bold">👨‍⚕️ Doctor Dashboard</h1>
-        <p className="text-lg mt-2">Welcome, Dr. {user?.name}</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold">👨‍⚕️ Doctor Dashboard</h1>
+            <p className="text-lg mt-2">Welcome, Dr. {user?.name}</p>
+          </div>
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="bg-white text-green-500 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition flex items-center gap-2"
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

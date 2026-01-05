@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { uploadMedicine, getAllMedicines, updateMedicineStock, getAllUsers, assignPatient } from '../services/api';
-import { FaPlus, FaTrash, FaToggleOn, FaToggleOff } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaToggleOn, FaToggleOff, FaSignOutAlt } from 'react-icons/fa';
 
 const AdminDashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [medicines, setMedicines] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
@@ -17,7 +19,8 @@ const AdminDashboard = () => {
     description: '',
     price: '',
     manufacturer: '',
-    category: ''
+    category: '',
+    image: null
   });
   const [assignmentData, setAssignmentData] = useState({
     doctorId: '',
@@ -43,14 +46,24 @@ const AdminDashboard = () => {
   };
 
   const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleAddMedicine = async (e) => {
     e.preventDefault();
     try {
-      await uploadMedicine(formData);
+      const data = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null && formData[key] !== '') {
+          data.append(key, formData[key]);
+        }
+      });
+      await uploadMedicine(data);
       alert('Medicine uploaded successfully!');
       setFormData({
         name: '',
@@ -59,7 +72,8 @@ const AdminDashboard = () => {
         description: '',
         price: '',
         manufacturer: '',
-        category: ''
+        category: '',
+        image: null
       });
       fetchData();
     } catch (error) {
@@ -96,8 +110,18 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-500 to-orange-600 text-white p-8">
-        <h1 className="text-4xl font-bold">⚙️ Admin Dashboard</h1>
-        <p className="text-lg mt-2">Manage medicines, doctors, and patients</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold">⚙️ Admin Dashboard</h1>
+            <p className="text-lg mt-2">Manage medicines, doctors, and patients</p>
+          </div>
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition flex items-center gap-2"
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -272,6 +296,17 @@ const AdminDashboard = () => {
                   rows="4"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Medicine Image</label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
               </div>
 
               <button

@@ -26,7 +26,11 @@ export const getAllUsers = () => API.get('/users');
 export const getMedicineStore = () => API.get('/medicines/store');
 export const addMedicineToUser = (data) => API.post('/medicines/add-to-user', data);
 export const getUserMedicines = () => API.get('/medicines/my-medicines');
-export const uploadMedicine = (data) => API.post('/medicines/upload', data);
+export const uploadMedicine = (formData) => API.post('/medicines/upload', formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 export const deleteMedicine = (id) => API.delete(`/medicines/${id}`);
 
 // Adherence APIs

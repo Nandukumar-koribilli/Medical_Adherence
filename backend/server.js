@@ -2,7 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
+
+// Cloudinary Configuration
+cloudinary.config({
+  cloudinary_url: process.env.CLOUDINARY_URL
+});
 
 const app = express();
 

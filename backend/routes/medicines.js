@@ -3,6 +3,10 @@ const router = express.Router();
 const Medicine = require('../models/Medicine');
 const UserMedicine = require('../models/UserMedicine');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all medicines (for medicine store)
 router.get('/store', async (req, res) => {
@@ -48,16 +52,25 @@ router.get('/my-medicines', authMiddleware, async (req, res) => {
 });
 
 // Upload medicine (admin only)
-router.post('/upload', authMiddleware, roleMiddleware(['admin']), async (req, res) => {
+router.post('/upload', authMiddleware, roleMiddleware(['admin']), upload.single('image'), async (req, res) => {
   try {
     const { name, dosage, frequency, description, price, manufacturer, category } = req.body;
-    
+
+    let imageUrl = '';
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`, {
+        resource_type: 'image'
+      });
+      imageUrl = result.secure_url;
+    }
+
     const medicine = new Medicine({
       name,
       dosage,
       frequency,
       description,
       price,
+      image: imageUrl,
       manufacturer,
       category,
       uploadedBy: req.userId,
