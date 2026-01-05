@@ -190,9 +190,4 @@ Reminder → Snooze → Missed → Caregiver Alert → Doctor Flag
 
 ## 👨‍💻 Developed By
 
-**Nandu Kumar**  
-B.Sc (Hons) Computer Science | IoT Minor  
-
-**Domains:**  
-Healthcare • AI • Full-Stack Development
-
+TEAM :- Code Loop
