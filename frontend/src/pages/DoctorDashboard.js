@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getReceivedMessages, getSentMessages, sendMessage, getAllUsers } from '../services/api';
-import { FaEnvelope, FaReply, FaSignOutAlt } from 'react-icons/fa';
+import { getReceivedMessages, sendMessage, getAllUsers } from '../services/api';
+import { FaReply, FaSignOutAlt } from 'react-icons/fa';
 
 const DoctorDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -80,21 +80,19 @@ const DoctorDashboard = () => {
         <div className="flex gap-4 mb-8">
           <button
             onClick={() => setActiveTab('messages')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'messages'
-                ? 'bg-green-500 text-white'
-                : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'messages'
+              ? 'bg-green-500 text-white'
+              : 'bg-white text-gray-700 border border-gray-300'
+              }`}
           >
             Patient Messages
           </button>
           <button
             onClick={() => setActiveTab('reply')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'reply'
-                ? 'bg-green-500 text-white'
-                : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'reply'
+              ? 'bg-green-500 text-white'
+              : 'bg-white text-gray-700 border border-gray-300'
+              }`}
           >
             Send Recommendation
           </button>
@@ -111,9 +109,21 @@ const DoctorDashboard = () => {
                     <p className="font-bold text-gray-800">From: {msg.senderId?.name}</p>
                     <p className="text-gray-600">📧 {msg.senderId?.email}</p>
                     <p className="mt-2 text-gray-700">{msg.message}</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      {new Date(msg.createdAt).toLocaleString()}
-                    </p>
+                    <div className="flex justify-between items-center mt-2">
+                      <p className="text-sm text-gray-500">
+                        {new Date(msg.createdAt).toLocaleString()}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSelectedPatient(msg.senderId._id);
+                          setMessageText(`Re: ${msg.subject}\n\n`);
+                          setActiveTab('reply');
+                        }}
+                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition flex items-center gap-1 text-sm"
+                      >
+                        <FaReply /> Reply
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

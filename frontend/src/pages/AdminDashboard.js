@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { uploadMedicine, getAllMedicines, updateMedicineStock, getAllUsers, assignPatient } from '../services/api';
-import { FaPlus, FaTrash, FaToggleOn, FaToggleOff, FaSignOutAlt } from 'react-icons/fa';
+import { FaPlus, FaToggleOn, FaToggleOff, FaSignOutAlt } from 'react-icons/fa';
 
 const AdminDashboard = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [medicines, setMedicines] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -129,31 +129,28 @@ const AdminDashboard = () => {
         <div className="flex gap-4 mb-8 flex-wrap">
           <button
             onClick={() => setActiveTab('medicines')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'medicines'
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'medicines'
                 ? 'bg-red-500 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+              }`}
           >
             Manage Medicines
           </button>
           <button
             onClick={() => setActiveTab('add-medicine')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'add-medicine'
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'add-medicine'
                 ? 'bg-red-500 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+              }`}
           >
             Add Medicine
           </button>
           <button
             onClick={() => setActiveTab('assign')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'assign'
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'assign'
                 ? 'bg-red-500 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+              }`}
           >
             Assign Patient
           </button>
@@ -181,9 +178,8 @@ const AdminDashboard = () => {
                       <td className="border p-3">{medicine.dosage}</td>
                       <td className="border p-3">₹{medicine.price}</td>
                       <td className="border p-3">
-                        <span className={`px-3 py-1 rounded-full text-white ${
-                          medicine.inStock ? 'bg-green-500' : 'bg-red-500'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-white ${medicine.inStock ? 'bg-green-500' : 'bg-red-500'
+                          }`}>
                           {medicine.inStock ? 'In Stock' : 'Out of Stock'}
                         </span>
                       </td>

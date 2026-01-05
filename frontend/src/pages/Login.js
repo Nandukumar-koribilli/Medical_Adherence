@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login as loginAPI } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
@@ -88,9 +88,9 @@ const Login = () => {
 
         <p className="text-center mt-6 text-gray-600">
           Don't have an account?{' '}
-          <a href="/register" className="text-blue-500 font-bold hover:underline">
+          <Link to="/register" className="text-blue-500 font-bold hover:underline">
             Register Here
-          </a>
+          </Link>
         </p>
 
         {/* Demo Credentials */}

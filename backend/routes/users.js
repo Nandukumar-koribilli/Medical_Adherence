@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const { authMiddleware, roleMiddleware } = require('../middleware/auth');
+const DoctorPatient = require('../models/DoctorPatient');
+const { authMiddleware } = require('../middleware/auth');
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -48,6 +49,19 @@ router.get('/doctors', async (req, res) => {
     res.json(doctors);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching doctors', error: error.message });
+  }
+});
+
+// Get assigned doctor for user
+router.get('/assigned-doctor', authMiddleware, async (req, res) => {
+  try {
+    const assignment = await DoctorPatient.findOne({ patientId: req.userId }).populate('doctorId', '-password');
+    if (!assignment) {
+      return res.status(404).json({ message: 'No assigned doctor found' });
+    }
+    res.json(assignment.doctorId);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching assigned doctor', error: error.message });
   }
 });
 

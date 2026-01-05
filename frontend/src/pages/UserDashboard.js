@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getMedicineStore, addMedicineToUser, logAdherence } from '../services/api';
+import { getMedicineStore, addMedicineToUser, getUserMedicines, logAdherence, sendMessage, getAssignedDoctor } from '../services/api';
 import { FaPlus, FaCheckCircle, FaTimesCircle, FaSignOutAlt } from 'react-icons/fa';
 
 const UserDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [assignedDoctor, setAssignedDoctor] = useState(null);
+  const [messageText, setMessageText] = useState('');
   const [medicines, setMedicines] = useState([]);
   const [userMedicines, setUserMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +16,8 @@ const UserDashboard = () => {
 
   useEffect(() => {
     fetchMedicines();
+    fetchUserMedicines();
+    fetchAssignedDoctor();
   }, []);
 
   const fetchMedicines = async () => {
@@ -24,6 +28,24 @@ const UserDashboard = () => {
     } catch (error) {
       console.error('Error fetching medicines:', error);
       setLoading(false);
+    }
+  };
+
+  const fetchUserMedicines = async () => {
+    try {
+      const response = await getUserMedicines();
+      setUserMedicines(response.data);
+    } catch (error) {
+      console.error('Error fetching user medicines:', error);
+    }
+  };
+
+  const fetchAssignedDoctor = async () => {
+    try {
+      const response = await getAssignedDoctor();
+      setAssignedDoctor(response.data);
+    } catch (error) {
+      console.error('Error fetching assigned doctor:', error);
     }
   };
 
@@ -60,6 +82,28 @@ const UserDashboard = () => {
     }
   };
 
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!assignedDoctor || !messageText) {
+      alert('No assigned doctor or message is empty');
+      return;
+    }
+
+    try {
+      await sendMessage({
+        receiverId: assignedDoctor._id,
+        subject: 'Patient Inquiry',
+        message: messageText,
+        messageType: 'inquiry'
+      });
+      alert('Message sent to doctor successfully!');
+      setMessageText('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert(error.response?.data?.message || 'Failed to send message');
+    }
+  };
+
   if (loading) return <div className="text-center py-12">Loading...</div>;
 
   return (
@@ -82,26 +126,33 @@ const UserDashboard = () => {
 
       {/* Tabs */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-4 mb-8 flex-wrap">
           <button
             onClick={() => setActiveTab('store')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'store'
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'store'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border border-gray-300'
+              }`}
           >
             Medicine Store
           </button>
           <button
             onClick={() => setActiveTab('my-medicines')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${
-              activeTab === 'my-medicines'
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700 border border-gray-300'
-            }`}
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'my-medicines'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border border-gray-300'
+              }`}
           >
             My Medicines
+          </button>
+          <button
+            onClick={() => setActiveTab('contact-doctor')}
+            className={`px-6 py-2 rounded-lg font-bold transition ${activeTab === 'contact-doctor'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border border-gray-300'
+              }`}
+          >
+            Contact Doctor
           </button>
         </div>
 
@@ -162,6 +213,43 @@ const UserDashboard = () => {
               ))
             ) : (
               <p className="text-center text-gray-600 col-span-2">No medicines added yet</p>
+            )}
+          </div>
+        )}
+
+        {/* Contact Doctor Tab */}
+        {activeTab === 'contact-doctor' && (
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-6">Contact Your Doctor</h2>
+            {assignedDoctor ? (
+              <div className="mb-4">
+                <p className="text-gray-700">
+                  <strong>Assigned Doctor:</strong> Dr. {assignedDoctor.name} ({assignedDoctor.email})
+                </p>
+              </div>
+            ) : (
+              <p className="text-gray-600 mb-4">No doctor assigned yet. Please contact admin for assignment.</p>
+            )}
+            {assignedDoctor && (
+              <form onSubmit={handleSendMessage} className="space-y-4">
+                <div>
+                  <label className="block text-gray-700 font-bold mb-2">Message</label>
+                  <textarea
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    placeholder="Enter your message to the doctor..."
+                    rows="6"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 text-white py-2 rounded-lg font-bold hover:bg-blue-600 transition flex items-center justify-center gap-2"
+                >
+                  <FaCheckCircle /> Send Message
+                </button>
+              </form>
             )}
           </div>
         )}

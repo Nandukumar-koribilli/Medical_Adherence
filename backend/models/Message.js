@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
   message: String,
   isRead: { type: Boolean, default: false },
   attachments: [String],
-  messageType: { type: String, enum: ['text', 'prescription', 'alert', 'recommendation'], default: 'text' },
+  messageType: { type: String, enum: ['text', 'prescription', 'alert', 'recommendation', 'inquiry'], default: 'text' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
