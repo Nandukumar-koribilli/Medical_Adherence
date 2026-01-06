@@ -10,7 +10,6 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
   const [meds, setMeds] = useState<Medication[]>([]);
-  const [file, setFile] = useState<File | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
 
@@ -109,17 +108,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
       formData.append('category', newMed.category);
       formData.append('manufacturer', 'Generic'); // Hardcoded for now
 
-      if (file) {
-        formData.append('image', file);
-      } else {
-        alert('Please select an image');
-        return;
-      }
 
       await api.uploadMedicine(formData);
       alert('Medicine uploaded successfully!');
       setNewMed({ name: '', dosage: '', price: '', stock: '', description: '', frequency: 'Daily', duration: 'Ongoing', category: 'General' });
-      setFile(null);
       fetchMeds();
     } catch (error) {
       console.error('Error uploading medicine:', error);
@@ -203,15 +195,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
                     value={newMed.description}
                     onChange={e => setNewMed({ ...newMed, description: e.target.value })}
                     className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Product Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => setFile(e.target.files ? e.target.files[0] : null)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                   />
                 </div>
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20">

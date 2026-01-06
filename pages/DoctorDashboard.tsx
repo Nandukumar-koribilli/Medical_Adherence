@@ -194,7 +194,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ user, onLogout }) => 
                 <h3 className="text-lg font-bold mb-4">Assigned Patients</h3>
                 {patients.map(p => (
                   <button
-                    key={p.id}
+                    key={p.id || p._id || p.name}
                     onClick={() => handlePatientSelect(p)}
                     className={`w-full text-left p-4 rounded-2xl border transition-all ${selectedPatient?.id === p.id ? 'bg-blue-600/10 border-blue-500' : 'bg-slate-900 border-slate-800 hover:border-slate-700'}`}
                   >
