@@ -220,7 +220,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {meds.map(med => (
-                      <tr key={med.id} className="text-sm">
+                      <tr key={med._id} className="text-sm">
                         <td className="py-4 font-semibold">{med.name}</td>
                         <td className="py-4 text-slate-400">{med.dosage}</td>
                         <td className="py-4 text-center text-blue-400 font-bold">${med.price}</td>
@@ -230,8 +230,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
                           </span>
                         </td>
                         <td className="py-4 text-right">
-                          <button onClick={() => handleDelete(med.id)} className="text-slate-500 hover:text-red-400 mr-4 transition-colors"><i className="fas fa-trash"></i></button>
-                          <button className="text-slate-500 hover:text-blue-400 transition-colors"><i className="fas fa-edit"></i></button>
+                          <button onClick={() => handleDelete(med._id)} className="text-slate-500 hover:text-red-400 mr-4 transition-colors"><i className="fas fa-trash"></i></button>
+                          <button onClick={() => alert('Edit functionality not implemented yet')} className="text-slate-500 hover:text-blue-400 transition-colors"><i className="fas fa-edit"></i></button>
                         </td>
                       </tr>
                     ))}
