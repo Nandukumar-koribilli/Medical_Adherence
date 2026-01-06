@@ -1,0 +1,7 @@
+{
+  "name": "MedSmart AI - Smart Drug Adherence Platform",
+  "description": "An AI-driven remote care platform designed to improve medicine adherence, featuring multi-role dashboards for patients, doctors, and admins with risk prediction and real-time analytics.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
